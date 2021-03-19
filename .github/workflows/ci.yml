@@ -1,0 +1,23 @@
+name: release
+
+on:
+  push:
+    branches:
+      - master
+  schedule:
+    - cron: '00 1 * * *'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build Docker Image
+        run: docker build . -t ztroop/builder-image:stable
+      - name: Push to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+          repository: ztroop/builder-image
+          tag_with_ref: true
